@@ -4,7 +4,7 @@ _G.auto_income_leave = _G.auto_income_leave and true or false;
 _G.auto_rejoin = _G.auto_rejoin and true or false;
 
 -- Avoid executing if we're not on unConventional
-if not game.PlaceId == 6673614635 then
+if not (game.PlaceId == 6673614635) then
     assert(false, "Not on unConventional!")
 end
 
