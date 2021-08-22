@@ -218,7 +218,7 @@ end
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = "Version 1.0.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes"}) 
+        Triantafyllo.Banner({Text = "Version 1.1.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes"}) 
     end,
     Menu = {
         ["Print changelog"] = function(self)
