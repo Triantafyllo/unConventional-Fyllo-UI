@@ -198,11 +198,33 @@ local Page = Triantafyllo.New({
     Title = "Income"
 })
 
+function ReturnChangelogString()
+    local changelog_table = loadstring(game:HttpGet("https://raw.githubusercontent.com/Triantafyllo/unConventional-Fyllo-UI/main/changelog.lua"))();
+    local final_string = ""
+    for i,v in pairs(changelog_table) do
+        final_string = final_string .. ("#- " .. i .. " -#")
+        final_string = final_string .. "\n--- What's new? ---\n"
+        for o,b in pairs(v) do
+            final_string = final_string .. b .. "\n"
+        end
+        final_string = final_string .. "\n"
+    end
+    
+    final_string = final_string:gsub("%s*$", '')
+    final_string = final_string .. "\n"
+    return final_string
+end
+
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
         Triantafyllo.Banner({Text = "Version 1.0.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes"}) 
-    end
+    end,
+    Menu = {
+        ["Print changelog"] = function(self)
+            warn(ReturnChangelogString())
+        end
+    }
 })
 
 local AutoAFKToggle = Page.Toggle({
