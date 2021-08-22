@@ -5,7 +5,7 @@ _G.auto_rejoin = _G.auto_rejoin and true or false;
 
 -- Avoid executing if we're not on unConventional
 if not game.PlaceId == 6673614635 then
-    return;
+    error()
 end
 
 -- Track whether we were kicked for income or not
@@ -14,33 +14,31 @@ local kicked_for_income = false;
 -- Block of code to ensure we're spoofing TouchEnabled for more money (fools the localscript without messing with it)
 do
     repeat wait() until game:IsLoaded();
-    if game.PlaceId == 6673614635 then
-        local PLAYERS = game:GetService("Players");
-        -- Ensure we're on "mobile" whenever we rejoin
-        if syn then
-            PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
-                if State == Enum.TeleportState.Started then
-                    syn.queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
-                end
-            end)
-        elseif queue_on_teleport then
-            PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
-                if State == Enum.TeleportState.Started then
-                    queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
-                end
-            end)
-        else
-            error("You can't run this script without queue_on_teleport!")
-        end
-        
-        -- If TouchEnabled is false, we rejoin to update it
-        if not game:GetService("UserInputService").TouchEnabled then
-            local time = 0;
-            repeat
-                time = time + game:GetService("RunService").Heartbeat:wait()
-            until time >= 10
-            game:GetService('TeleportService'):Teleport(game.PlaceId, PLAYERS.LocalPlayer)
-        end
+    local PLAYERS = game:GetService("Players");
+    -- Ensure we're on "mobile" whenever we rejoin
+    if syn then
+        PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
+            if State == Enum.TeleportState.Started then
+                syn.queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
+            end
+        end)
+    elseif queue_on_teleport then
+        PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
+            if State == Enum.TeleportState.Started then
+                queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
+            end
+        end)
+    else
+        error("You can't run this script without queue_on_teleport!")
+    end
+
+    -- If TouchEnabled is false, we rejoin to update it
+    if not game:GetService("UserInputService").TouchEnabled then
+        local time = 0;
+        repeat
+            time = time + game:GetService("RunService").Heartbeat:wait()
+        until time >= 10
+        game:GetService('TeleportService'):Teleport(game.PlaceId, PLAYERS.LocalPlayer)
     end
 end
 
@@ -58,7 +56,7 @@ local waithb = function(s)
     end
 end
 
--- Simple function to kick Un-AFK button
+-- Simple function to click Un-AFK button
 function ClickUnAfkButton()
     repeat wait() until game:IsLoaded()
     local LOCALPLAYER = game:GetService("Players").LocalPlayer
@@ -135,8 +133,9 @@ end
 function KickForIncome(income_required, time_in_hours)
     repeat wait() until game:IsLoaded()
     local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local KICK_TIME_IN_SECONDS = time_in_hours * 60 * 60
+    local KICK_TIME_IN_SECONDS = time_in_hours * 60 * 60 -- Conversion to seconds
     
+    -- The if statements ensures that we weren't kicked already and that are below the threshold
     if not kicked_for_income and ExtractIncome() <= income_required then
         kicked_for_income = true;
         LOCALPLAYER:Kick("Kicked for Auto Income Leave | Left at " ..
@@ -147,6 +146,7 @@ function KickForIncome(income_required, time_in_hours)
     end
 end
 
+-- Auto rejoin function if we're kicked for anything other than income leave, e.g., Connection is briefly lost.
 spawn(function()
     repeat wait() until game:IsLoaded()
     local LOCALPLAYER = game:GetService("Players").LocalPlayer
@@ -160,7 +160,7 @@ spawn(function()
                 local ERROR_TITLE = ERROR_PROMPT:WaitForChild("TitleFrame", 3):WaitForChild("ErrorTitle", 3).Text;
                 
                 if ERROR_TITLE == "Disconnected" then
-                    waithb(0.5)
+                    waithb(3) -- The wait is 3 seconds because this feature's main purpose is to keep AFK farming going
                     game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
                 end
             end
@@ -168,6 +168,7 @@ spawn(function()
     end)
 end)
 
+-- This main spawned thread makes the script execute in the first place.
 spawn(function()
     while not kicked_for_income do
         if _G.auto_anti_afk then
@@ -182,7 +183,7 @@ spawn(function()
     end
 end)
 
-
+-- Down here it's all of the UI
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))();
 
 local Triantafyllo = Material.Load({
@@ -200,7 +201,7 @@ local Page = Triantafyllo.New({
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = ""}) 
+        Triantafyllo.Banner({Text = "Version 1.0.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes"}) 
     end
 })
 
@@ -215,7 +216,7 @@ local AutoAFKToggle = Page.Toggle({
             Triantafyllo.Banner({Text = "This feature auto-completes Anti-AFK questions for you; works on multiple instances, doesn't require window focus."}) 
         end,
         Warning = function(self)
-            Triantafyllo.Banner({Text = "The developer is relatively active; HamstaGang's UI, the original one, has gotten many people tagged or even banned. Don't use this feature after updates until the UI is updated too."}) 
+            Triantafyllo.Banner({Text = "The developer is relatively active; HamstaGang's UI, the original one, has gotten many people tagged or even banned (due to being outdated). Don't use this feature after updates until the UI is updated too. (Look at the version number to know if it updated)"}) 
         end
     }
 })
