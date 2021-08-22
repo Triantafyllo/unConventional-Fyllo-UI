@@ -5,7 +5,7 @@ _G.auto_rejoin = _G.auto_rejoin and true or false;
 
 -- Avoid executing if we're not on unConventional
 if not game.PlaceId == 6673614635 then
-    error()
+    assert(false, "Not on unConventional!")
 end
 
 -- Track whether we were kicked for income or not
