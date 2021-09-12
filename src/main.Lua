@@ -97,7 +97,7 @@ function SolveAntiAfk()
     if ANTI_AFK_FRAME.Visible == true or UNAFK_BUTTON.Visible == true then
         ClickUnAfkButton()
         
-        waithb(2)
+        waithb(math.random(5, 8))
         
         -- We find the text box which we would normally see
         local ACTIVE_TEXT_BOX;
