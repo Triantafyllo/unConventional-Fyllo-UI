@@ -8,6 +8,9 @@ if not (game.PlaceId == 6673614635) then
     assert(false, "Not on unConventional!")
 end
 
+-- Use Iris Compatibility Script
+loadstring(game:HttpGet("https://irisapp.ca/api/Scripts/IrisBetterCompat.lua"))()
+
 -- Track whether we were kicked for income or not
 local kicked_for_income = false;
 
