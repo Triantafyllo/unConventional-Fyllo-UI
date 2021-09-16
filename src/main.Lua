@@ -15,7 +15,7 @@ loadstring(game:HttpGet("https://irisapp.ca/api/Scripts/IrisBetterCompat.lua"))(
 local kicked_for_income = false;
 
 -- Block of code to ensure we're spoofing TouchEnabled for more money (fools the localscript without messing with it)
-do
+--[[do
     repeat wait() until game:IsLoaded();
     local PLAYERS = game:GetService("Players");
     -- Ensure we're on "mobile" whenever we rejoin
@@ -43,7 +43,22 @@ do
         until time >= 10
         game:GetService('TeleportService'):Teleport(game.PlaceId, PLAYERS.LocalPlayer)
     end
-end
+end]]
+
+-- Better method; gets rid of gaming script (Responsible for GetCash ticking and crashing the client if AFK for too long)
+-- and ensure that IF the client attempts to tell the server that we're AFK, it doesn't fire at all.
+local GameMetatable = getrawmetatable(game)
+make_writeable(GameMetatable)
+
+local OldNameCall = GameMetatable.__namecall
+GameMetatable.__namecall = newcclosure(function(Object, ...)
+    if Object.ClassName == "RemoteEvent" or Object.ClassName == "RemoteFunction" then
+        if not checkcaller() and Object.Name == "GetCash" then
+            return
+        end
+    end
+    return OldNameCall(Object, ...)
+end)
 
 -- Custom wait function that uses Heartbeat
 local waithb = function(s)
