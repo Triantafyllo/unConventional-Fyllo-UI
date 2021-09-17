@@ -8,6 +8,19 @@ if not (game.PlaceId == 6673614635) then
     assert(false, "Not on unConventional!")
 end
 
+-- Init variables
+local LOCALPLAYER;
+local PLAYER_UI;
+local INCOME_TEXT;
+local UNAFK_BUTTON;
+local ANTI_AFK_FRAME;
+local QUESTION_TEXT;
+local CLEANED_QUESTION;
+local ANTI_AFK_ANSWER;
+local RUNSERVICE;
+local CLEANED_INCOME_ANSWER;
+
+
 -- Use Iris Compatibility Script
 loadstring(game:HttpGet("https://irisapp.ca/api/Scripts/IrisBetterCompat.lua"))()
 
@@ -60,9 +73,11 @@ GameMetatable.__namecall = newcclosure(function(Object, ...)
     return OldNameCall(Object, ...)
 end)
 
+game:GetService("Players").LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("gaming").Disabled = true
+
 -- Custom wait function that uses Heartbeat
 local waithb = function(s)
-    local RUNSERVICE = game:GetService("RunService")
+    RUNSERVICE = game:GetService("RunService")
     
     if s then
         local time = 0;
@@ -77,10 +92,10 @@ end
 -- Simple function to click Un-AFK button
 function ClickUnAfkButton()
     repeat wait() until game:IsLoaded()
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
-    local INCOME_TEXT = PLAYER_UI:WaitForChild("income")
-    local UNAFK_BUTTON = INCOME_TEXT:WaitForChild("TextButton")
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
+    PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    INCOME_TEXT = PLAYER_UI:WaitForChild("income")
+    UNAFK_BUTTON = INCOME_TEXT:WaitForChild("TextButton")
     
     if UNAFK_BUTTON.Visible == true then
         for _, func in pairs(getconnections(UNAFK_BUTTON.MouseButton1Click)) do
@@ -92,25 +107,25 @@ end
 -- Function to extract the answer for the Anti-AFK question
 function ExtractAntiAfkResult()
     repeat wait() until game:IsLoaded()
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
-    local ANTI_AFK_FRAME = PLAYER_UI:WaitForChild("AntiAFK")
-    local QUESTION_TEXT = ANTI_AFK_FRAME:WaitForChild("question").Text
-    local CLEANED_QUESTION = QUESTION_TEXT:gsub('[^0-9%+%-]', '') -- Thanks HamstaGang for inspiring me to use gsub!
-    local ANSWER = loadstring("return " .. CLEANED_QUESTION)(); -- Thanks HamstaGang for making your friend's solution open-sourced! :D
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
+    PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    ANTI_AFK_FRAME = PLAYER_UI:WaitForChild("AntiAFK")
+    QUESTION_TEXT = ANTI_AFK_FRAME:WaitForChild("question").Text
+    CLEANED_QUESTION = QUESTION_TEXT:gsub('[^0-9%+%-]', '') -- Thanks HamstaGang for inspiring me to use gsub!
+    ANTI_AFK_ANSWER = loadstring("return " .. CLEANED_QUESTION)(); -- Thanks HamstaGang for making your friend's solution open-sourced! :D
     
-    return ANSWER
+    return ANTI_AFK_ANSWER
 end
 
 -- Function to solve Anti-AFK
 function SolveAntiAfk()
     repeat wait() until game:IsLoaded()
-    local RUNSERVICE = game:GetService("RunService")
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
-    local ANTI_AFK_FRAME = PLAYER_UI:WaitForChild("AntiAFK")
-    local INCOME_TEXT = PLAYER_UI:WaitForChild("income")
-    local UNAFK_BUTTON = INCOME_TEXT:WaitForChild("TextButton")
+    RUNSERVICE = game:GetService("RunService")
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
+    PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    ANTI_AFK_FRAME = PLAYER_UI:WaitForChild("AntiAFK")
+    INCOME_TEXT = PLAYER_UI:WaitForChild("income")
+    UNAFK_BUTTON = INCOME_TEXT:WaitForChild("TextButton")
     
     if ANTI_AFK_FRAME.Visible == true or UNAFK_BUTTON.Visible == true then
         ClickUnAfkButton()
@@ -140,18 +155,18 @@ end
 -- Function to return our income as a number
 function ExtractIncome()
     repeat wait() until game:IsLoaded()
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
-    local INCOME_TEXT = PLAYER_UI:WaitForChild("income").Text
-    local CLEANED_INCOME = INCOME_TEXT:gsub('[^0-9%+%-]', '')
-    return(tonumber(CLEANED_INCOME))
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
+    PLAYER_UI = LOCALPLAYER:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    INCOME_TEXT = PLAYER_UI:WaitForChild("income").Text
+    CLEANED_INCOME_ANSWER = INCOME_TEXT:gsub('[^0-9%+%-]', '')
+    return(tonumber(CLEANED_INCOME_ANSWER))
 end
 
 -- Function that kicks if our income is below the given threshold for the given time using waithb
 function KickForIncome(income_required, time_in_hours)
     repeat wait() until game:IsLoaded()
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
-    local KICK_TIME_IN_SECONDS = time_in_hours * 60 * 60 -- Conversion to seconds
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
+    local _KICK_TIME_IN_SECONDS = time_in_hours * 60 * 60 -- Conversion to seconds
     
     -- The if statements ensures that we weren't kicked already and that are below the threshold
     if not kicked_for_income and ExtractIncome() <= income_required then
@@ -159,7 +174,7 @@ function KickForIncome(income_required, time_in_hours)
         LOCALPLAYER:Kick("Kicked for Auto Income Leave | Left at " ..
             tostring(os.date('%H:%M', os.time())) .. 
             " | Rejoining in 2.5 hours");
-        waithb(KICK_TIME_IN_SECONDS)
+        waithb(_KICK_TIME_IN_SECONDS)
         game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
     end
 end
@@ -167,7 +182,7 @@ end
 -- Auto rejoin function if we're kicked for anything other than income leave, e.g., Connection is briefly lost.
 spawn(function()
     repeat wait() until game:IsLoaded()
-    local LOCALPLAYER = game:GetService("Players").LocalPlayer
+    LOCALPLAYER = game:GetService("Players").LocalPlayer
     local PROMPT_OVERLAY = game:GetService("CoreGui"):WaitForChild("RobloxPromptGui", 3):WaitForChild("promptOverlay", 3);
     
     PROMPT_OVERLAY.DescendantAdded:Connect(function()
@@ -236,7 +251,7 @@ end
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = "Version 1.1.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes"}) 
+        Triantafyllo.Banner({Text = "Version 1.1.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
     end,
     Menu = {
         ["Print changelog"] = function(self)
