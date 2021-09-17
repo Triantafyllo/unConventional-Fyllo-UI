@@ -173,7 +173,8 @@ function KickForIncome(income_required, time_in_hours)
         kicked_for_income = true;
         LOCALPLAYER:Kick("Kicked for Auto Income Leave | Left at " ..
             tostring(os.date('%H:%M', os.time())) .. 
-            " | Rejoining in 2.5 hours");
+            " | Rejoining in 2.5 hours, at " ..
+            tostring(os.date('%H:%M', os.time() + _KICK_TIME_IN_SECONDS)));
         waithb(_KICK_TIME_IN_SECONDS)
         game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
     end
@@ -251,7 +252,7 @@ end
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = "Version 1.1.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
+        Triantafyllo.Banner({Text = "Version 1.2.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
     end,
     Menu = {
         ["Print changelog"] = function(self)
