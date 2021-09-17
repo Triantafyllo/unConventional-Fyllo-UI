@@ -73,7 +73,11 @@ GameMetatable.__namecall = newcclosure(function(Object, ...)
     return OldNameCall(Object, ...)
 end)
 
-game:GetService("Players").LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("gaming").Disabled = true
+spawn(function()
+    repeat wait() until game:IsLoaded();
+    wait(5)
+    game:GetService("Players").LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("gaming").Disabled = true
+end)
 
 -- Custom wait function that uses Heartbeat
 local waithb = function(s)
