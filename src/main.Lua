@@ -8,6 +8,16 @@ if not (game.PlaceId == 6673614635) then
     assert(false, "Not on unConventional!")
 end
 
+-- Wait for game to be loaded in, credits to IY
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
+
+-- Wait for LocalPlayer to be available, credits to https://devforum.roblox.com/t/player-playerswaitforlocalplayer/45070
+while game.Players.LocalPlayer == nil do
+	game.Players:GetPropertyChangedSignal('LocalPlayer'):wait()
+end
+
 -- Init variables
 local LOCALPLAYER;
 local PLAYER_UI;
@@ -256,7 +266,7 @@ end
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = "Version 1.2.0 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
+        Triantafyllo.Banner({Text = "Version 1.2.1 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
     end,
     Menu = {
         ["Print changelog"] = function(self)
