@@ -1,4 +1,7 @@
 local changelog_table = {
+    ["Version 1.3.1"] = {
+        "- Reverted to old Anti-AFK tick method, as the previous one is not safe"
+    },
     ["Version 1.2.1"] = {
         "* Fixed a bug where the script would occasionally error"
     },

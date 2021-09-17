@@ -38,17 +38,11 @@ loadstring(game:HttpGet("https://irisapp.ca/api/Scripts/IrisBetterCompat.lua"))(
 local kicked_for_income = false;
 
 -- Block of code to ensure we're spoofing TouchEnabled for more money (fools the localscript without messing with it)
---[[do
+do
     repeat wait() until game:IsLoaded();
     local PLAYERS = game:GetService("Players");
     -- Ensure we're on "mobile" whenever we rejoin
-    if syn then
-        PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
-            if State == Enum.TeleportState.Started then
-                syn.queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
-            end
-        end)
-    elseif queue_on_teleport then
+    if HasFunction("queue_on_teleport") then
         PLAYERS.LocalPlayer.OnTeleport:Connect(function(State)
             if State == Enum.TeleportState.Started then
                 queue_on_teleport("loadstring(game:HttpGet(\"https://pastebin.com/raw/tUUGAeaH\", true))(); spoof(game:GetService(\"UserInputService\"), \"TouchEnabled\", true);")
@@ -63,12 +57,12 @@ local kicked_for_income = false;
         local time = 0;
         repeat
             time = time + game:GetService("RunService").Heartbeat:wait()
-        until time >= 10
+        until time >= 3
         game:GetService('TeleportService'):Teleport(game.PlaceId, PLAYERS.LocalPlayer)
     end
-end]]
+end
 
--- Better method; gets rid of gaming script (Responsible for GetCash ticking and crashing the client if AFK for too long)
+--[[ Better method; gets rid of gaming script (Responsible for GetCash ticking and crashing the client if AFK for too long)
 -- and ensure that IF the client attempts to tell the server that we're AFK, it doesn't fire at all.
 local GameMetatable = getrawmetatable(game)
 make_writeable(GameMetatable)
@@ -88,7 +82,7 @@ spawn(function()
     wait(5)
     game:GetService("Players").LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("gaming").Disabled = true
 end)
-
+]]
 -- Custom wait function that uses Heartbeat
 local waithb = function(s)
     RUNSERVICE = game:GetService("RunService")
@@ -266,7 +260,7 @@ end
 local ChangelogButton = Page.Button({
     Text = "Show Version",
     Callback = function()
-        Triantafyllo.Banner({Text = "Version 1.2.1 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
+        Triantafyllo.Banner({Text = "Version 1.3.1 | First digit is major changes, second digit is minor changes, third digit is bugfixes."}) 
     end,
     Menu = {
         ["Print changelog"] = function(self)
